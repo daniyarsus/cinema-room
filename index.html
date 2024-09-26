@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Cinema</title>
+</head>
+<body>
+    <h1>Live Video Stream</h1>
+    <img id="videoStream" width="640" height="480" />
+    <script>
+        // Устанавливаем WebSocket-соединение
+        let ws = new WebSocket("ws://localhost:8000/ws/video");
+
+        ws.binaryType = "arraybuffer";  // Ожидаем бинарные данные
+
+        ws.onmessage = function(event) {
+            // Получаем бинарные данные (JPEG кадр)
+            let blob = new Blob([event.data], {type: 'image/jpeg'});
+            let url = URL.createObjectURL(blob);
+
+            // Устанавливаем изображение в элемент img
+            document.getElementById("videoStream").src = url;
+        };
+
+        ws.onclose = function(event) {
+            console.log("Connection closed");
+        };
+    </script>
+</body>
+</html>
